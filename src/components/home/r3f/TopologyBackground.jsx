@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import { shaderMaterial, Plane } from '@react-three/drei';
 import * as THREE from 'three';
@@ -99,17 +99,27 @@ export function TopologyBackground({
     lineThickness = 0.03,
 }) {
     const materialRef = useRef();
+    const hasInitializedUniforms = useRef(false);
     const planeWidth = 90;
     const planeHeight = 40;
+
+    useEffect(() => {
+        hasInitializedUniforms.current = false;
+    }, [color, opacity, scale, lineThickness]);
 
     useFrame((_, delta) => {
         if (!materialRef.current) return;
         materialRef.current.uTime += delta * (speed / 0.05);
-        materialRef.current.uResolution.set(planeWidth, planeHeight);
-        materialRef.current.uColor.set(color);
-        materialRef.current.uLineOpacity = opacity;
-        materialRef.current.uScale = scale;
-        materialRef.current.uLineThickness = lineThickness;
+        
+        if (!hasInitializedUniforms.current) {
+            materialRef.current.uResolution.set(planeWidth, planeHeight);
+            materialRef.current.uColor.set(color);
+            materialRef.current.uLineOpacity = opacity;
+            materialRef.current.uScale = scale;
+            materialRef.current.uLineThickness = lineThickness;
+            hasInitializedUniforms.current = true;
+        }
+        
         const targetOpacity = isZoomedIn ? 0.25 : 1.0;
         easing.damp(materialRef.current, 'uOpacity', targetOpacity, 0.3, delta);
     });

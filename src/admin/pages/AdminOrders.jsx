@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../utils/helpers';
 import { Eye, X, CheckCircle, Truck, RefreshCw, AlertCircle } from 'lucide-react';
 import { apiFetch } from '../../utils/api';
+import { toast } from 'sonner';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -43,14 +44,14 @@ const AdminOrders = () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Status update failed');
 
-            // Update local state
             setOrders(orders.map((o) => (o._id === orderId ? data : o)));
             if (selectedOrder && selectedOrder._id === orderId) {
                 setSelectedOrder(data);
             }
+            toast.success('Order status updated successfully.');
         } catch (err) {
             console.error(err);
-            alert(err.message);
+            toast.error(err.message || 'Failed to update order status.');
         } finally {
             setUpdatingId(null);
         }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { LayoutDashboard, ShoppingCart, ShoppingBag, Users, LogOut, ArrowLeft, Menu, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const AdminLayout = () => {
         try {
             const user = JSON.parse(userStr);
             if (user.role !== 'admin') {
-                alert('Access denied: You do not have administrator permissions.');
+                toast.error('Access denied: You do not have administrator permissions.');
                 navigate('/', { replace: true });
                 return;
             }

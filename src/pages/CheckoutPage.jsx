@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import { formatCurrency, validatePincode, validateMobile, validateEmail } from '../utils/helpers';
 import { ArrowLeft, CheckCircle, CreditCard, Truck, ShieldCheck } from 'lucide-react';
 import { apiFetch } from '../utils/api';
+import { toast } from 'sonner';
 
 // Dynamically inject Razorpay checkout.js once
 const loadRazorpayScript = () =>
@@ -194,7 +195,7 @@ const CheckoutPage = () => {
             setStep(3);
         } catch (error) {
             console.error('Order error:', error);
-            alert(error.message || 'Something went wrong. Please try again.');
+            toast.error(error.message || 'Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }

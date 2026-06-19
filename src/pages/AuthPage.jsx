@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {
     Eye, EyeOff, User, Mail, Lock,
     AlertCircle, Key, CheckCircle, ArrowRight, ShieldCheck, ChevronLeft,
@@ -83,8 +83,12 @@ function FieldError({ msg }) {
 
 // ─── Main ──────────────────────────────────────────────────────────────────────
 
+const VALID_MODES = ['email-login', 'otp', 'register'];
+
 const AuthPage = () => {
-    const [authMode, setAuthMode] = useState('email-login');
+    const [searchParams] = useSearchParams();
+    const modeParam = searchParams.get('mode');
+    const [authMode, setAuthMode] = useState(VALID_MODES.includes(modeParam) ? modeParam : 'email-login');
     const [showPassword, setShowPassword] = useState(false);
 
     const [name, setName] = useState('');

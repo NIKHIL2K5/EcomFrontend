@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+/* Google Fonts loaded via non-blocking <link> tags in index.html */
+
 
 @tailwind base;
 @tailwind components;
@@ -328,12 +329,4 @@ html {
 /* Image Loading */
 img {
   @apply transition-opacity duration-300;
-}
-
-img[loading="lazy"] {
-  @apply opacity-0;
-}
-
-img[loading="lazy"].loaded {
-  @apply opacity-100;
 }

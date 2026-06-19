@@ -2,9 +2,8 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { useState } from 'react';
 import { formatCurrency, calculateDiscount } from '../../utils/helpers';
-import { motion } from 'framer-motion';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, inverted = false }) => {
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [currentImage, setCurrentImage] = useState(0);
 
@@ -23,12 +22,7 @@ const ProductCard = ({ product }) => {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="group relative"
-        >
+        <div className="group relative animate-fade-in">
             <Link to={`/product/${product.slug}`} className="block">
                 {/* Image Container */}
                 <div
@@ -40,6 +34,10 @@ const ProductCard = ({ product }) => {
                     <img
                         src={product.images[currentImage].url}
                         alt={product.images[currentImage].alt}
+                        width={400}
+                        height={533}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
 
@@ -57,6 +55,7 @@ const ProductCard = ({ product }) => {
                                                     ? 'badge-limited'
                                                     : 'badge-bestseller'
                                         }`}
+                                
                                 >
                                     {badge}
                                 </span>
@@ -97,22 +96,22 @@ const ProductCard = ({ product }) => {
                 {/* Product Info */}
                 <div className="space-y-2">
                     {/* Category */}
-                    <p className="text-xs text-neutral-500 uppercase tracking-wide">
+                    <p className={`text-xs uppercase tracking-wide ${inverted ? 'text-neutral-300' : 'text-neutral-500'}`}>
                         {product.category}
                     </p>
 
                     {/* Product Name */}
-                    <h3 className="font-medium text-neutral-900 line-clamp-2 group-hover:text-neutral-600 transition-colors">
+                    <h3 className={`font-medium line-clamp-2 transition-colors ${inverted ? 'text-white group-hover:text-neutral-200' : 'text-neutral-900 group-hover:text-neutral-600'}`}>
                         {product.name}
                     </h3>
 
                     {/* Price */}
                     <div className="flex items-center gap-2">
-                        <span className="font-semibold text-neutral-900">
+                        <span className={`font-semibold ${inverted ? 'text-white' : 'text-neutral-900'}`}>
                             {formatCurrency(product.price)}
                         </span>
                         {product.compareAtPrice && (
-                            <span className="text-sm text-neutral-500 line-through">
+                            <span className={`text-sm line-through ${inverted ? 'text-neutral-300' : 'text-neutral-500'}`}>
                                 {formatCurrency(product.compareAtPrice)}
                             </span>
                         )}
@@ -124,7 +123,7 @@ const ProductCard = ({ product }) => {
                             {[...new Set(product.variants.map((v) => v.size))].slice(0, 5).map((size) => (
                                 <span
                                     key={size}
-                                    className="text-xs px-2 py-1 border border-neutral-300 rounded text-neutral-600"
+                                    className={`text-xs px-2 py-1 border rounded ${inverted ? 'border-white/40 text-white' : 'border-neutral-300 text-neutral-600'}`}
                                 >
                                     {size}
                                 </span>
@@ -133,7 +132,7 @@ const ProductCard = ({ product }) => {
                     )}
                 </div>
             </Link>
-        </motion.div>
+        </div>
     );
 };
 

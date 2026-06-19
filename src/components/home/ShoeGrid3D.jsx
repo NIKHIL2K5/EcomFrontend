@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect, Suspense } from 'react';
+import React, { useMemo, useState, useEffect, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { DEFAULT_CONFIG, CONFIG } from './r3f/gridConfig';
 import { rigState, calculateGridDimensions, matchesFilter } from './r3f/gridState';
@@ -20,7 +20,7 @@ const FALLBACK_IMAGES = [
     'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1556906781-9a412961a28c?w=400&h=300&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1608667508764-33cf0726b13a?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=400&h=300&fit=crop&q=80',
@@ -30,7 +30,7 @@ const FALLBACK_IMAGES = [
     'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1465479423260-c4afc24172c6?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1628253747716-0c4f5c90fdda?w=400&h=300&fit=crop&q=80',
-    'https://images.unsplash.com/photo-1584735175315-9d5df23be7be?w=400&h=300&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?w=400&h=300&fit=crop&q=80',
     'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?w=400&h=300&fit=crop&q=80',
@@ -83,8 +83,9 @@ const buildCollections = (products) => {
 };
 
 export default function ShoeGrid3D({ products = [] }) {
+    const navigate = useNavigate();
     const [zoomTarget, setZoomTarget] = useState(null);
-    const [currentZoom, setCurrentZoom] = useState(rigState.zoom);
+    const [isZoomedIn, setIsZoomedIn] = useState(false);
     const [hasActiveSelection, setHasActiveSelection] = useState(false);
     const [activeFilter, setActiveFilter] = useState('all');
     const [activeCollectionIdx, setActiveCollectionIdx] = useState(0);
@@ -98,14 +99,30 @@ export default function ShoeGrid3D({ products = [] }) {
         rigState.isDragging = false;
     }, []);
 
-    // Poll zoom + activeId (R3F state lives outside React)
+    // Single RAF loop to sync critical UI state updates (only re-renders React when values cross state thresholds)
     useEffect(() => {
-        const id = setInterval(() => setCurrentZoom(rigState.zoom), 50);
-        return () => clearInterval(id);
-    }, []);
-    useEffect(() => {
-        const id = setInterval(() => setHasActiveSelection(rigState.activeId !== null), 16);
-        return () => clearInterval(id);
+        let rafId;
+        let lastZoomedIn = rigState.zoom <= CONFIG.zoomIn + 0.5;
+        let lastActive = rigState.activeId !== null;
+        
+        setIsZoomedIn(lastZoomedIn);
+        setHasActiveSelection(lastActive);
+
+        const poll = () => {
+            const zoomedIn = rigState.zoom <= CONFIG.zoomIn + 0.5;
+            const active = rigState.activeId !== null;
+            if (zoomedIn !== lastZoomedIn) {
+                lastZoomedIn = zoomedIn;
+                setIsZoomedIn(zoomedIn);
+            }
+            if (active !== lastActive) {
+                lastActive = active;
+                setHasActiveSelection(active);
+            }
+            rafId = requestAnimationFrame(poll);
+        };
+        rafId = requestAnimationFrame(poll);
+        return () => cancelAnimationFrame(rafId);
     }, []);
 
     // Responsive zoom levels for the embedded canvas
@@ -115,7 +132,6 @@ export default function ShoeGrid3D({ products = [] }) {
             CONFIG.zoomOut = w < 480 ? 48 : w < 768 ? 38 : DEFAULT_CONFIG.zoomOut;
             if (rigState.zoom > CONFIG.zoomIn + 2) {
                 rigState.zoom = CONFIG.zoomOut;
-                setCurrentZoom(CONFIG.zoomOut);
             }
         };
         update();
@@ -127,11 +143,9 @@ export default function ShoeGrid3D({ products = [] }) {
     useEffect(() => {
         if (zoomTarget === 'OUT') {
             rigState.zoom = CONFIG.zoomOut;
-            setCurrentZoom(CONFIG.zoomOut);
             rigState.target.set(0, 2, 0);
         } else if (typeof zoomTarget === 'number') {
             rigState.zoom = zoomTarget;
-            setCurrentZoom(zoomTarget);
         }
         setZoomTarget(null);
     }, [zoomTarget]);
@@ -184,7 +198,6 @@ export default function ShoeGrid3D({ products = [] }) {
     }, [activeLayer.items, activeCollectionIdx, activeFilter]);
 
     const activeDims = calculateGridDimensions(filteredCount);
-    const isZoomedIn = currentZoom <= CONFIG.zoomIn + 0.5;
 
 
     return (
@@ -219,8 +232,8 @@ export default function ShoeGrid3D({ products = [] }) {
             >
                 <Canvas
                     camera={{ position: [0, 0, DEFAULT_CONFIG.zoomOut], fov: 45 }}
-                    dpr={[1, 2]}
-                    gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
+                    dpr={[1, 1.5]}
+                    gl={{ antialias: true, toneMapping: THREE.NoToneMapping, powerPreference: 'high-performance' }}
                     style={{ background: '#f0f0f0' }}
                 >
                     <Rig gridW={activeDims.width} gridH={activeDims.height} />
@@ -258,7 +271,7 @@ export default function ShoeGrid3D({ products = [] }) {
                     onFilterChange={handleFilterChange}
                     onShopNow={() => {
                         const links = ['/collections/running', '/collections/sneakers', '/collections'];
-                        window.location.href = links[activeCollectionIdx] || '/collections/running';
+                        navigate(links[activeCollectionIdx] || '/collections/running');
                     }}
                 />
             </div>

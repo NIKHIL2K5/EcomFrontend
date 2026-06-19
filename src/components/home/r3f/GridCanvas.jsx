@@ -52,35 +52,24 @@ export function GridCanvas({ items, gridVisible, transitionStartTime, interactiv
         return { mappedItems: mapped, filteredGridDims: filteredDims };
     }, [items, filter, gridVisible]);
 
-    const [mountedCount, setMountedCount] = useState(gridVisible ? 0 : items.length);
-
-    useFrame(() => {
-        if (mountedCount < mappedItems.length) {
-            setMountedCount(prev => Math.min(prev + 5, mappedItems.length));
-        }
-    });
-
     return (
         <>
-            {mappedItems.map((item, i) => {
-                if (i > mountedCount) return null;
-                return (
-                    <TileErrorBoundary key={item.product_url || item.index}>
-                        <Suspense fallback={null}>
-                            <ShoeTile
-                                data={item}
-                                index={item.index}
-                                basePos={item.basePos}
-                                gridVisible={gridVisible}
-                                transitionStartTime={transitionStartTime}
-                                interactive={interactive && item.matchesFilter}
-                                matchesFilter={item.matchesFilter}
-                                gridHeight={filteredGridDims.height}
-                            />
-                        </Suspense>
-                    </TileErrorBoundary>
-                );
-            })}
+            {mappedItems.map((item) => (
+                <TileErrorBoundary key={item.product_url || item.index}>
+                    <Suspense fallback={null}>
+                        <ShoeTile
+                            data={item}
+                            index={item.index}
+                            basePos={item.basePos}
+                            gridVisible={gridVisible}
+                            transitionStartTime={transitionStartTime}
+                            interactive={interactive && item.matchesFilter}
+                            matchesFilter={item.matchesFilter}
+                            gridHeight={filteredGridDims.height}
+                        />
+                    </Suspense>
+                </TileErrorBoundary>
+            ))}
         </>
     );
 }

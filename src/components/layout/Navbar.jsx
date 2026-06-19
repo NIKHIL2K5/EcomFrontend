@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, User, Heart, ShoppingBag, Menu, X, ChevronDown } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import theElegantLogo from '../../assets/images/the_elegant_logo.png';
 
-const womenLogo = '/Womenlogo.bmp';
+const womenLogo = '/Womenlogo.png';
 
 const Navbar = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const isWomenSection = location.pathname.toLowerCase().includes('women');
     const activeLogo = isWomenSection ? womenLogo : theElegantLogo;
@@ -36,13 +37,13 @@ const Navbar = () => {
         checkUser();
         window.addEventListener('focus', checkUser);
         return () => window.removeEventListener('focus', checkUser);
-    }, []);
+    }, [location]);
 
     const handleSignOut = () => {
         localStorage.clear();
         setUser(null);
         setProfileOpen(false);
-        window.location.href = '/';
+        navigate('/');
     };
 
     useEffect(() => {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../utils/helpers';
 import { Plus, Search, Edit2, Trash2, X, UploadCloud, AlertCircle } from 'lucide-react';
 import { apiFetch, apiUpload } from '../../utils/api';
+import { toast } from 'sonner';
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -131,7 +132,7 @@ const AdminProducts = () => {
 
     const handleAddVariant = () => {
         if (!vSize || !vColor || !vPrice || !vInventory) {
-            alert('Please specify size, color, price, and inventory for variant');
+            toast.error('Please specify size, color, price, and inventory for the variant.');
             return;
         }
 
@@ -216,26 +217,33 @@ const AdminProducts = () => {
 
             setIsModalOpen(false);
             fetchProducts();
+            toast.success(editingProduct ? 'Product updated successfully.' : 'Product created successfully.');
         } catch (err) {
             console.error(err);
             setModalError(err.message);
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!confirm('Are you sure you want to delete this product from the inventory?')) return;
-
+    const performDelete = async (id) => {
         try {
             const res = await apiFetch(`/products/${id}`, { method: 'DELETE' });
-
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Deletion failed');
-
             fetchProducts();
+            toast.success('Product deleted from inventory.');
         } catch (err) {
             console.error(err);
-            alert(err.message);
+            toast.error(err.message || 'Failed to delete product.');
         }
+    };
+
+    const handleDelete = (id) => {
+        toast('Delete this product?', {
+            description: 'This action cannot be undone.',
+            action: { label: 'Delete', onClick: () => performDelete(id) },
+            cancel: { label: 'Cancel' },
+            duration: 8000,
+        });
     };
 
     const CATEGORIES = ['All', 'Running', 'Sneakers', 'Mens Clothing', 'Womens Clothing', 'Kids', 'Accessories'];

@@ -4,7 +4,8 @@ function handleUnauthorized() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     const isAdmin = window.location.pathname.startsWith('/admin');
-    window.location.href = isAdmin ? '/admin/login' : '/auth';
+    // Custom event lets App.jsx use React Router navigate() — avoids bfcache-killing window.location.href
+    window.dispatchEvent(new CustomEvent('auth:session-expired', { detail: { isAdmin } }));
 }
 
 async function apiFetch(path, options = {}) {
@@ -14,7 +15,7 @@ async function apiFetch(path, options = {}) {
 
     const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
-    if (res.status === 401 || res.status === 403) {
+    if ((res.status === 401 || res.status === 403) && !path.startsWith('/auth/')) {
         handleUnauthorized();
         throw new Error('Session expired. Please log in again.');
     }
