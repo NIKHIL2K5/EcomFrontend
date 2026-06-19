@@ -358,7 +358,7 @@ const AuthPage = () => {
                             ELEVATE YOUR EVERYDAY STYLE.
                         </h1>
                         <p className="text-neutral-300 text-lg max-w-md">
-                            Join the LUXE membership program to unlock exclusive collections, early drops, and complimentary shipping on all selections.
+                            Join THE ELEGANT membership program to unlock exclusive collections, early drops, and complimentary shipping on all selections.
                         </p>
                     </div>
                 </div>

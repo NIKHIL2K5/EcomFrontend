@@ -508,8 +508,8 @@ export const products = [
     // ==================== WOMEN'S CLOTHING ====================
     {
         id: 'women-1',
-        name: 'Studio Luxe Tank',
-        slug: 'studio-luxe-tank',
+        name: 'Studio The Elegant Tank',
+        slug: 'studio-the-elegant-tank',
         description: 'Premium training tank with seamless construction. Elevate your workout.',
         price: 2499,
         compareAtPrice: null,
@@ -519,7 +519,7 @@ export const products = [
             {
                 id: 'img-women-1',
                 url: 'https://images.unsplash.com/photo-1562157873-818bc0726f68?w=800&q=80',
-                alt: 'Studio Luxe Tank',
+                alt: 'Studio The Elegant Tank',
                 position: 1,
             },
         ],

@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
                         <span className="px-3 py-1 bg-white text-black text-xs font-bold tracking-widest uppercase rounded-full mb-6 inline-block">EST. 2026</span>
                         <h1 className="text-5xl font-black font-display tracking-tight mb-4 leading-tight">SECURE YOUR ACCOUNT.</h1>
                         <p className="text-neutral-300 text-lg max-w-md">
-                            Choose a strong password to keep your LUXE account and order history safe.
+                            Choose a strong password to keep your THE ELEGANT account and order history safe.
                         </p>
                     </div>
                 </div>

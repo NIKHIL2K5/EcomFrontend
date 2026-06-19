@@ -51,7 +51,7 @@ const AdminLayout = () => {
             {/* Mobile Nav Top Bar */}
             <div className="md:hidden bg-neutral-900 text-white flex items-center justify-between p-4 shadow-md z-40">
                 <div className="flex items-center gap-2">
-                    <span className="font-display font-black text-xl tracking-wider">LUXE ADMIN</span>
+                    <span className="font-display font-black text-xl tracking-wider">THE ELEGANT ADMIN</span>
                 </div>
                 <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -69,7 +69,7 @@ const AdminLayout = () => {
                     {/* Brand */}
                     <div className="hidden md:block">
                         <Link to="/admin/dashboard" className="font-display font-black text-2xl tracking-widest block">
-                            LUXE <span className="text-xs text-neutral-400 block tracking-normal font-sans font-medium uppercase mt-1">Control Panel</span>
+                            THE ELEGANT <span className="text-xs text-neutral-400 block tracking-normal font-sans font-medium uppercase mt-1">Control Panel</span>
                         </Link>
                     </div>
 

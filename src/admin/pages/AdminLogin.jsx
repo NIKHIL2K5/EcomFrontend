@@ -66,7 +66,7 @@ const AdminLogin = () => {
             <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-2xl p-8 shadow-2xl space-y-6 text-white">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-black tracking-widest font-display">
-                        LUXE <span className="text-neutral-500 font-sans font-bold text-xs uppercase tracking-normal">Admin</span>
+                        THE ELEGANT <span className="text-neutral-500 font-sans font-bold text-xs uppercase tracking-normal">Admin</span>
                     </h1>
                     <p className="text-neutral-400 text-sm">
                         Enter administrator credentials to access dashboard
@@ -94,7 +94,7 @@ const AdminLogin = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="admin@luxe.com"
+                                placeholder="admin@theelegant.com"
                                 className="w-full bg-neutral-950 border border-neutral-800 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all text-sm"
                             />
                         </div>
